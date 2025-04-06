@@ -1,15 +1,7 @@
-# Huntarr [Sonarr Edition] - Force Sonarr to Hunt Missing Shows & Upgrade Episode Qualities
+# Refresharr - Force arr's to Hunt Missing content & Upgrade content Qualities
  
 <h2 align="center">Want to Help? Click the Star in the Upper-Right Corner! ⭐</h2>
 
-<table>
-  <tr>
-    <td colspan="2"><img src="https://github.com/user-attachments/assets/34264f2e-928d-44e5-adb7-0dbd08fadfd0" width="100%"/></td>
-  </tr>
-</table>
-
-
-**NOTE**: This utilizes Sonarr API Version - `5`.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -28,21 +20,8 @@
 
 ## Overview
 
-This script continually searches your Sonarr library for shows with missing episodes and episodes that need quality upgrades. It automatically triggers searches for both missing episodes and episodes below your quality cutoff. It's designed to run continuously while being gentle on your indexers, helping you gradually complete your TV show collection with the best available quality.
+This app continually searches your arr libraries for content with missing items and items that need quality upgrades. It automatically triggers searches for both missing items and items below your quality cutoff. It's designed to run continuously while being gentle on your indexers, helping you gradually complete your Content collection with the best available quality.
 
-## Related Projects
-
-* [Huntarr - Radarr Edition](https://github.com/plexguide/Radarr-Hunter) - Sister version for Movies
-* [Huntarr - Lidarr Edition](https://github.com/plexguide/Lidarr-Hunter) - Sister version for Music
-* [Huntarr - Readarr Edition](https://github.com/plexguide/Huntarr-Readarr) - Sister version for Books
-* [Unraid Intel ARC Deployment](https://github.com/plexguide/Unraid_Intel-ARC_Deployment) - Convert videos to AV1 Format (I've saved 325TB encoding to AV1)
-* Visit [PlexGuide](https://plexguide.com) for more great scripts
-
-## PayPal Donations – Building My Daughter's Future
-
-My 12-year-old daughter is passionate about singing, dancing, and exploring STEM. She consistently earns A-B honors and dreams of a bright future. Every donation goes directly into her college fund, helping turn those dreams into reality. Thank you for your generous support!
-
-[![Donate with PayPal button](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate?hosted_button_id=58AYJ68VVMGSC)
 
 ## Features
 
@@ -55,9 +34,6 @@ My 12-year-old daughter is passionate about singing, dancing, and exploring STEM
 - 🔁 **State Tracking**: Remembers which shows and episodes have been processed to avoid duplicate searches
 - ⚙️ **Configurable Reset Timer**: Automatically resets search history after a configurable period
 - 📦 **Modular Design**: Modern codebase with separated concerns for easier maintenance
-
-## Indexers Approving of Huntarr:
-* https://ninjacentral.co.za
 
 ## How It Works
 
