@@ -1,14 +1,7 @@
-# Huntarr [Sonarr Edition] - Force Sonarr to Hunt Missing Shows & Upgrade Episode Qualities
-
+# Refresharr - Force arr's to Hunt Missing content & Upgrade content Qualities
+ 
 <h2 align="center">Want to Help? Click the Star in the Upper-Right Corner! ⭐</h2>
 
-<table>
-  <tr>
-    <td colspan="2"><img src="https://github.com/user-attachments/assets/34264f2e-928d-44e5-adb7-0dbd08fadfd0" width="100%"/></td>
-  </tr>
-</table>
-
-**NOTE**: This utilizes Sonarr API Version - `5`. The Script: [huntarr.sh](huntarr.sh)
 
 ## Table of Contents
 - [Overview](#overview)
@@ -27,20 +20,8 @@
 
 ## Overview
 
-This script continually searches your Sonarr library for shows with missing episodes and episodes that need quality upgrades. It automatically triggers searches for both missing episodes and episodes below your quality cutoff. It's designed to run continuously while being gentle on your indexers, helping you gradually complete your TV show collection with the best available quality.
+This app continually searches your arr libraries for content with missing items and items that need quality upgrades. It automatically triggers searches for both missing items and items below your quality cutoff. It's designed to run continuously while being gentle on your indexers, helping you gradually complete your Content collection with the best available quality.
 
-## Related Projects
-
-* [Huntarr - Radarr Edition](https://github.com/plexguide/Radarr-Hunter) - Sister version for movies
-* [Huntarr - Lidarr Edition](https://github.com/plexguide/Lidarr-Hunter) - Sister version for music
-* [Unraid Intel ARC Deployment](https://github.com/plexguide/Unraid_Intel-ARC_Deployment) - Convert videos to AV1 Format (I've saved 325TB encoding to AV1)
-* Visit [PlexGuide](https://plexguide.com) for more great scripts
-
-## PayPal Donations – Building My Daughter's Future
-
-My 12-year-old daughter is passionate about singing, dancing, and exploring STEM. She consistently earns A-B honors and dreams of a bright future. Every donation goes directly into her college fund, helping turn those dreams into reality. Thank you for your generous support!
-
-[![Donate with PayPal button](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate?hosted_button_id=58AYJ68VVMGSC)
 
 ## Features
 
@@ -52,6 +33,7 @@ My 12-year-old daughter is passionate about singing, dancing, and exploring STEM
 - 🛡️ **Error Handling**: Gracefully handles connection issues and API failures
 - 🔁 **State Tracking**: Remembers which shows and episodes have been processed to avoid duplicate searches
 - ⚙️ **Configurable Reset Timer**: Automatically resets search history after a configurable period
+- 📦 **Modular Design**: Modern codebase with separated concerns for easier maintenance
 
 ## How It Works
 
@@ -72,11 +54,11 @@ My 12-year-old daughter is passionate about singing, dancing, and exploring STEM
 <table>
   <tr>
     <td width="50%">
-      <img src="https://github.com/user-attachments/assets/6a9dd459-db84-42bc-9392-27491d2ae1c8" width="100%"/>
+      <img src="https://github.com/user-attachments/assets/d758b9ae-ecef-4056-ba4e-a7fe363bd182" width="100%"/>
       <p align="center"><em>Missing Episodes Demo</em></p>
     </td>
     <td width="50%">
-      <img src="https://github.com/user-attachments/assets/db502745-adb2-47e5-95e5-51d2ea54aa59" width="100%"/>
+      <img src="https://github.com/user-attachments/assets/923033d5-fb86-4777-952f-638d8503f776" width="100%"/>
       <p align="center"><em>Quality Upgrade Demo</em></p>
     </td>
   </tr>
@@ -96,10 +78,10 @@ The following environment variables can be configured:
 |------------------------------|-----------------------------------------------------------------------|---------------|
 | `API_KEY`                    | Your Sonarr API key                                                      | Required   |
 | `API_URL`                    | URL to your Sonarr instance                                              | Required   |
+| `API_TIMEOUT`                | Timeout in seconds for API requests to Sonarr                            | 60         |
 | `MONITORED_ONLY`             | Only process monitored shows/episodes                                    | true       |
-| `SEARCH_TYPE`                | Which search to perform: `"missing"`, `"upgrade"`, or `"both"`           | both       |
-| `MAX_MISSING`                | Maximum missing shows to process per cycle                               | 1          |
-| `MAX_UPGRADES`               | Maximum upgrade episodes to process per cycle                            | 5          |
+| `HUNT_MISSING_SHOWS`         | Maximum missing shows to process per cycle                               | 1          |
+| `HUNT_UPGRADE_EPISODES`      | Maximum upgrade episodes to process per cycle                            | 0          |
 | `SLEEP_DURATION`             | Seconds to wait after completing a cycle (900 = 15 minutes)              | 900        |
 | `RANDOM_SELECTION`           | Use random selection (`true`) or sequential (`false`)                    | true       |
 | `STATE_RESET_INTERVAL_HOURS` | Hours which the processed state files reset (168=1 week, 0=never reset)  | 168        |
@@ -107,20 +89,22 @@ The following environment variables can be configured:
 
 ### Detailed Configuration Explanation
 
-- **SEARCH_TYPE**  
-  - Determines which type of search the script performs.  
-  - Options:  
-    - `"missing"`: Only processes missing shows (episodes that haven't been downloaded yet).  
-    - `"upgrade"`: Only processes episodes that need quality upgrades (do not meet the quality cutoff).  
-    - `"both"`: First processes missing shows and then processes upgrade episodes in one cycle.
+- **API_TIMEOUT**
+  - Sets the maximum number of seconds to wait for Sonarr API responses before timing out.
+  - This is particularly important when working with large libraries or when checking for many quality upgrades.
+  - If you experience timeout errors (especially during the "Checking for Quality Upgrades" phase), increase this value.
+  - For libraries with thousands of episodes needing quality upgrades, values of 90-120 seconds may be necessary.
+  - Default is 60 seconds, which works well for most medium-sized libraries.
 
-- **MAX_MISSING**  
+- **HUNT_MISSING_SHOWS**  
   - Sets the maximum number of missing shows to process in each cycle.  
   - Once this limit is reached, the script stops processing further missing shows until the next cycle.
+  - Set to `0` to disable missing show processing completely.
 
-- **MAX_UPGRADES**  
+- **HUNT_UPGRADE_EPISODES**  
   - Sets the maximum number of upgrade episodes to process in each cycle.  
-  - When this limit is reached, the upgrade portion of the cycle stops and the script waits for the next cycle.
+  - When this limit is reached, the upgrade portion of the cycle stops.
+  - Set to `0` to disable quality upgrade processing completely.
 
 - **RANDOM_SELECTION**
   - When `true`, selects shows and episodes randomly, which helps distribute searches across your library.
@@ -130,9 +114,9 @@ The following environment variables can be configured:
   - Controls how often the script "forgets" which items it has already processed.  
   - The script records the IDs of missing shows and upgrade episodes that have been processed.  
   - When the age of these records exceeds the number of hours set by this variable, the records are cleared automatically.  
-  - This reset allows the script to re-check items that were previously processed, so if there are changes (such as improved quality or new episodes), they can be processed again.  
+  - This reset allows the script to re-check items that were previously processed.
   - Setting this to `0` will disable the reset functionality entirely - processed items will be remembered indefinitely.
-  - Default is 168 hours (one week) - meaning the script will start fresh and re-check everything weekly.
+  - Default is 168 hours (one week) - meaning the script will start fresh weekly.
 
 - **DEBUG_MODE**
   - When set to `true`, the script will output detailed debugging information about API responses and internal operations.
@@ -152,9 +136,8 @@ docker run -d --name huntarr-sonarr \
   -e API_KEY="your-api-key" \
   -e API_URL="http://your-sonarr-address:8989" \
   -e MONITORED_ONLY="true" \
-  -e SEARCH_TYPE="both" \
-  -e MAX_MISSING="1" \
-  -e MAX_UPGRADES="5" \
+  -e HUNT_MISSING_SHOWS="1" \
+  -e HUNT_UPGRADE_EPISODES="0" \
   -e SLEEP_DURATION="900" \
   -e RANDOM_SELECTION="true" \
   -e STATE_RESET_INTERVAL_HOURS="168" \
@@ -181,10 +164,10 @@ services:
     environment:
       API_KEY: "your-api-key"
       API_URL: "http://your-sonarr-address:8989"
+      API_TIMEOUT: "60"
       MONITORED_ONLY: "true"
-      SEARCH_TYPE: "both"
-      MAX_MISSING: "1"
-      MAX_UPGRADES: "5"
+      HUNT_MISSING_SHOWS: "1"
+      HUNT_UPGRADE_EPISODES: "0"
       SLEEP_DURATION: "900"
       RANDOM_SELECTION: "true"
       STATE_RESET_INTERVAL_HOURS: "168"
@@ -197,28 +180,25 @@ Then run:
 docker-compose up -d huntarr-sonarr
 ```
 
-To check on the status of the program, you should see new files downloading or you can type:
-```bash
-docker logs huntarr-sonarr
-```
-
 ### Unraid Users
 
-Run this from Command Line in Unraid. This will eventually be pushed to the Unraid App Store
+Run this from Command Line in Unraid:
 
+```bash
 docker run -d --name huntarr-sonarr \
   --restart always \
   -e API_KEY="your-api-key" \
   -e API_URL="http://your-sonarr-address:8989" \
+  -e API_TIMEOUT="60" \
   -e MONITORED_ONLY="true" \
-  -e SEARCH_TYPE="both" \
-  -e MAX_MISSING="1" \
-  -e MAX_UPGRADES="5" \
+  -e HUNT_MISSING_SHOWS="1" \
+  -e HUNT_UPGRADE_EPISODES="0" \
   -e SLEEP_DURATION="900" \
   -e RANDOM_SELECTION="true" \
   -e STATE_RESET_INTERVAL_HOURS="168" \
   -e DEBUG_MODE="false" \
   huntarr/4sonarr:latest
+```
 
 ### SystemD Service
 
@@ -238,10 +218,10 @@ Type=simple
 User=your-username
 Environment="API_KEY=your-api-key"
 Environment="API_URL=http://localhost:8989"
+Environment="API_TIMEOUT=60"
 Environment="MONITORED_ONLY=true"
-Environment="SEARCH_TYPE=both"
-Environment="MAX_MISSING=1"
-Environment="MAX_UPGRADES=5"
+Environment="HUNT_MISSING_SHOWS=1"
+Environment="HUNT_UPGRADE_EPISODES=0"
 Environment="SLEEP_DURATION=900"
 Environment="RANDOM_SELECTION=true"
 Environment="STATE_RESET_INTERVAL_HOURS=168"
@@ -273,8 +253,7 @@ sudo systemctl start huntarr
 
 - **First-Time Use**: Start with default settings to ensure it works with your setup
 - **Adjusting Speed**: Lower the `SLEEP_DURATION` to search more frequently (be careful with indexer limits)
-- **Focus on Missing or Upgrades**: Use the `SEARCH_TYPE` setting to focus on what matters to you
-- **Batch Size Control**: Adjust `MAX_MISSING` and `MAX_UPGRADES` based on your indexer's rate limits
+- **Batch Size Control**: Adjust `HUNT_MISSING_SHOWS` and `HUNT_UPGRADE_EPISODES` based on your indexer's rate limits
 - **Monitored Status**: Set `MONITORED_ONLY=false` if you want to download all missing episodes regardless of monitored status
 - **System Resources**: The script uses minimal resources and can run continuously on even low-powered systems
 - **Debugging Issues**: Enable `DEBUG_MODE=true` temporarily to see detailed logs when troubleshooting
@@ -286,7 +265,7 @@ sudo systemctl start huntarr
 - **Command Failures**: If search commands fail, try using the Sonarr UI to verify what commands are available in your version
 - **Logs**: Check the container logs with `docker logs huntarr-sonarr` if running in Docker
 - **Debug Mode**: Enable `DEBUG_MODE=true` to see detailed API responses and process flow
-- **State Files**: The script stores state in `/tmp/huntarr-sonarr-state/` - if something seems stuck, you can try deleting these files
+- **State Files**: The script stores state in `/tmp/huntarr-state/` - if something seems stuck, you can try deleting these files
 
 ---
 
@@ -301,6 +280,9 @@ sudo systemctl start huntarr
 - **v8**: Added debug mode and improved error handling
 - **v9**: Enhanced random selection mode for better distribution
 - **v10**: Renamed from "Sonarr Hunter" to "Huntarr"
+- **v11**: Complete modular refactoring for better maintainability
+- **v12**: Improved variable naming with HUNT_ prefix
+- **v13**: Enhanced state management and cycle processing
 
 ---
 
